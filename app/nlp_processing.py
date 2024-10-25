@@ -38,12 +38,3 @@ def answer_question(text: str, question: str) -> str:
         return response["choices"][0]["message"]["content"]
     else:
         return response.get("error", "An unknown error occurred.")
-
-
-sample_text = "LangChain is a framework for developing applications powered by language models. It provides tools for chains, agents, and prompts that can be easily customized for different applications, such as chatbots and document analysis."
-sample_question = "What are the uses of LangChain?"
-
-# Get the answer
-answer = answer_question(sample_text, sample_question)
-print(f"Question: {sample_question}")
-print(f"Answer: {answer}")
