@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { FiUpload } from "react-icons/fi";
 import { RiRobot2Line } from "react-icons/ri";
@@ -8,13 +7,16 @@ import { IoSend } from "react-icons/io5";
 import { motion, AnimatePresence } from "framer-motion";
 import toast, { Toaster } from 'react-hot-toast';
 
+// Main component for the home page
 export default function Home() {
+  // State variables
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [messages, setMessages] = useState<Array<{type: 'user' | 'bot', content: string}>>([]);
+  const [messages, setMessages] = useState<Array<{ type: 'user' | 'bot', content: string }>>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [pdfId, setPdfId] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  // Handle file upload
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type === 'application/pdf') {
@@ -23,6 +25,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append('file', file);
 
+      // Upload PDF and handle response
       toast.promise(
         fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/upload-pdf/`, {
           method: 'POST',
@@ -54,6 +57,7 @@ export default function Home() {
         }
       );
     } else {
+      // Handle invalid file type
       setMessages(prev => [...prev, {
         type: 'bot',
         content: 'Please upload a valid PDF file.'
@@ -62,56 +66,60 @@ export default function Home() {
     }
   };
 
+  // Handle sending messages
   const handleSendMessage = async () => {
     if (inputMessage.trim()) {
-        const userMessage = inputMessage.trim();
-        setMessages(prev => [...prev, { type: 'user', content: userMessage }]);
-        setInputMessage('');
+      const userMessage = inputMessage.trim();
+      setMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+      setInputMessage('');
 
-        if (!pdfId) {
-            setMessages(prev => [...prev, {
-                type: 'bot',
-                content: 'Please upload a PDF first before asking questions.'
-            }]);
-            toast.error('Please upload a PDF first before asking questions.');
-            return;
-        }
+      if (!pdfId) {
+        // Prompt user to upload PDF if not done
+        setMessages(prev => [...prev, {
+          type: 'bot',
+          content: 'Please upload a PDF first before asking questions.'
+        }]);
+        toast.error('Please upload a PDF first before asking questions.');
+        return;
+      }
 
-        toast.promise(
-          fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/ask-question/${pdfId}`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ question: userMessage }),
-          }).then(async (response) => {
-              if (!response.ok) {
-                  throw new Error('Failed to get answer');
-              }
-
-              const data = await response.json();
-              setMessages(prev => [...prev, {
-                  type: 'bot',
-                  content: `${data.answer}`
-              }]);
-              return 'Answer received!';
-          }),
-          {
-              success: (msg) => msg,
-              error: (err) => {
-                  console.error('Error getting answer:', err);
-                  setMessages(prev => [...prev, {
-                      type: 'bot',
-                      content: 'Sorry, I encountered an error while processing your question. Please try again.'
-                  }]);
-                  return 'Error processing your question. Please try again.';
-              },
-              loading: 'Processing your question...',
+      // Send question to the server
+      toast.promise(
+        fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/ask-question/${pdfId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question: userMessage }),
+        }).then(async (response) => {
+          if (!response.ok) {
+            throw new Error('Failed to get answer');
           }
-        );
-    }
-};
 
+          const data = await response.json();
+          setMessages(prev => [...prev, {
+            type: 'bot',
+            content: `${data.answer}`
+          }]);
+          return 'Answer received!';
+        }),
+        {
+          success: (msg) => msg,
+          error: (err) => {
+            console.error('Error getting answer:', err);
+            setMessages(prev => [...prev, {
+              type: 'bot',
+              content: 'Sorry, I encountered an error while processing your question. Please try again.'
+            }]);
+            return 'Error processing your question. Please try again.';
+          },
+          loading: 'Processing your question...',
+        }
+      );
+    }
+  };
+
+  // Scroll to the bottom of the messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -170,9 +178,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className={`flex ${
-                  message.type === 'user' ? 'justify-end' : 'justify-start'
-                }`}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`max-w-[95%] sm:max-w-[70%] p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-md ${
