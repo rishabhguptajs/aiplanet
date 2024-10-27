@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+dotenv
+python-multipart
+requests
+json
+fitz
