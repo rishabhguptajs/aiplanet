@@ -76,3 +76,8 @@ async def ask_question(pdf_id: int, question: str = Body(..., embed=True), sessi
     
     # Return the question and the corresponding answer
     return {"question": question, "answer": answer}
+
+# Bind the FastAPI application to a specific port
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
