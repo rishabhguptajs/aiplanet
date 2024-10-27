@@ -24,7 +24,7 @@ export default function Home() {
       formData.append('file', file);
 
       toast.promise(
-        fetch('http://127.0.0.1:8000/upload-pdf/', {
+        fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/upload-pdf/`, {
           method: 'POST',
           body: formData,
         }).then(async (response) => {
@@ -78,7 +78,7 @@ export default function Home() {
         }
 
         toast.promise(
-          fetch(`http://localhost:8000/ask-question/${pdfId}`, {
+          fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/ask-question/${pdfId}`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
