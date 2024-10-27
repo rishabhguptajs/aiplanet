@@ -4,5 +4,3 @@ sqlalchemy
 python-dotenv
 python-multipart
 requests
-json
-fitz
