@@ -23,6 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    """
+    Default endpoint to test the FastAPI application.
+    """
+    return {"message": "Hello World!"}
+
 @app.post("/upload-pdf/")
 async def upload_pdf(file: UploadFile = File(...), session: Session = Depends(get_session)):
     """
@@ -80,4 +87,5 @@ async def ask_question(pdf_id: int, question: str = Body(..., embed=True), sessi
 # Bind the FastAPI application to a specific port
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Change the host to '127.0.0.1' for local development
+    uvicorn.run(app, host="127.0.0.1", port=8000)
