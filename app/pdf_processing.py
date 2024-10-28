@@ -17,4 +17,5 @@ def extract_text_from_pdf(pdf_path: str) -> str:
     for page in doc:
         text += page.get_text()  # Append the text from the current page
 
+    doc.close()  # Close the PDF document after processing
     return text  # Return the complete extracted text
