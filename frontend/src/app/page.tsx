@@ -6,6 +6,7 @@ import { RiRobot2Line } from "react-icons/ri";
 import { IoSend } from "react-icons/io5";
 import { motion, AnimatePresence } from "framer-motion";
 import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios'; // Import axios
 
 // Main component for the home page
 export default function Home() {
@@ -27,16 +28,13 @@ export default function Home() {
 
       // Upload PDF and handle response
       toast.promise(
-        fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/upload-pdf/`, {
-          method: 'POST',
-          body: formData,
+        axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/upload-pdf/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }).then(async (response) => {
-          if (!response.ok) {
-            throw new Error('Failed to upload PDF');
-          }
-
-          const data = await response.json();
-          setPdfId(data.id);
+          console.log(response);
+          setPdfId(1);
           setMessages(prev => [...prev, {
             type: 'bot',
             content: `PDF "${file.name}" uploaded successfully! You can now ask questions about it.`
@@ -85,18 +83,14 @@ export default function Home() {
 
       // Send question to the server
       toast.promise(
-        fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/ask-question/${pdfId}`, {
-          method: 'POST',
+        axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/ask-question/${pdfId}`, {
+          question: userMessage,
+        }, {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ question: userMessage }),
         }).then(async (response) => {
-          if (!response.ok) {
-            throw new Error('Failed to get answer');
-          }
-
-          const data = await response.json();
+          const data = response.data;
           setMessages(prev => [...prev, {
             type: 'bot',
             content: `${data.answer}`
