@@ -1,5 +1,4 @@
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, Body
-from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from .database import get_session
 from .pdf_processing import extract_text_from_pdf
@@ -14,14 +13,14 @@ load_dotenv()
 # Initialize FastAPI application
 app = FastAPI()
 
-# Configure CORS middleware to allow requests from any origin
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS middleware is disabled
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["http://localhost:3000", "https://aiplanet-backend-lk4f.onrender.com"],  # Specify allowed origins
+#     allow_credentials=False,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.get("/")
 async def root():
