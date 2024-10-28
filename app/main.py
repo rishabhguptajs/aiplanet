@@ -87,5 +87,5 @@ async def ask_question(pdf_id: int, question: str = Body(..., embed=True), sessi
 # Bind the FastAPI application to a specific port
 if __name__ == "__main__":
     import uvicorn
-    # Change the host to '127.0.0.1' for local development
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    # Change the host to '0.0.0.0' for deployment
+    uvicorn.run(app, host="0.0.0.0", port=8000)
